@@ -1,0 +1,427 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Coin Flip Simulator</title>
+
+<style>
+
+body{
+    font-family:Arial,sans-serif;
+    background:#f4f6f8;
+    text-align:center;
+    padding:6px;
+    margin:0;
+    overflow:hidden;
+}
+
+h1{
+    margin:4px 0;
+    font-size:1.5em;
+    color:#2c3e50;
+}
+
+.coin-container{
+    width:120px;
+    height:120px;
+    margin:6px auto;
+    perspective:1000px;
+}
+
+.coin{
+    width:120px;
+    height:120px;
+    position:relative;
+    transform-style:preserve-3d;
+}
+
+.face{
+    position:absolute;
+    width:100%;
+    height:100%;
+    border-radius:50%;
+    backface-visibility:hidden;
+
+    display:flex;
+    justify-content:center;
+    align-items:center;
+
+    font-size:60px;
+    font-weight:bold;
+
+    background:
+    radial-gradient(circle at 30% 30%,
+    #fff5a0,
+    #ffd700 40%,
+    #d4a017 75%,
+    #8b6508);
+
+    border:6px solid #8b6508;
+
+    box-sizing:border-box;
+
+    box-shadow:
+    inset 0 0 10px rgba(255,255,255,0.5),
+    inset 0 0 20px rgba(0,0,0,0.3),
+    0 4px 10px rgba(0,0,0,0.25);
+}
+
+.heads{
+    color:darkred;
+}
+
+.tails{
+    color:navy;
+    transform:rotateY(180deg);
+}
+
+@keyframes flipAnimation{
+    from{
+        transform:rotateY(0deg);
+    }
+    to{
+        transform:rotateY(1800deg);
+    }
+}
+
+.flipping{
+    animation:flipAnimation 1s ease-in-out;
+}
+
+button{
+    padding:7px 14px;
+    font-size:14px;
+    margin:3px;
+    border:none;
+    border-radius:6px;
+    background:#3498db;
+    color:white;
+    cursor:pointer;
+}
+
+button:hover{
+    background:#2980b9;
+}
+
+button:disabled{
+    background:#95a5a6;
+}
+
+.result{
+    font-size:18px;
+    font-weight:bold;
+    min-height:24px;
+    margin:4px;
+}
+
+table{
+    margin:8px auto;
+    border-collapse:collapse;
+    background:white;
+    font-size:13px;
+}
+
+th,td{
+    border:1px solid #ccc;
+    padding:5px 12px;
+}
+
+#graph{
+    background:white;
+    border:1px solid #999;
+    margin-top:5px;
+}
+
+</style>
+</head>
+<body>
+
+<h1>Biased Coin Flip Simulator</h1>
+
+<div class="coin-container">
+
+    <div id="coin" class="coin">
+
+        <div class="face heads">
+            H
+        </div>
+
+        <div class="face tails">
+            T
+        </div>
+
+    </div>
+
+</div>
+
+<div id="result" class="result">
+Click "Flip Coin"
+</div>
+
+<button onclick="flipCoin()">Flip Coin</button>
+<button onclick="resetSimulation()">Reset</button>
+
+<table>
+<tr>
+    <th>Total Flips</th>
+    <th>Heads</th>
+    <th>Tails</th>
+    <th>Sample Proportion p̂</th>
+</tr>
+
+<tr>
+    <td id="total">0</td>
+    <td id="heads">0</td>
+    <td id="tails">0</td>
+    <td id="phat">0.000</td>
+</tr>
+</table>
+
+<canvas id="graph" width="850" height="260"></canvas>
+
+<script>
+
+// Hidden probability (not shown to students)
+const pHeads = 0.42;
+
+let total = 0;
+let heads = 0;
+let tails = 0;
+
+let proportions = [];
+
+const coin = document.getElementById("coin");
+
+function disableButtons(state){
+    document.querySelectorAll("button")
+        .forEach(btn => btn.disabled = state);
+}
+
+function showHeads(){
+    coin.style.transform = "rotateY(0deg)";
+}
+
+function showTails(){
+    coin.style.transform = "rotateY(180deg)";
+}
+
+function updateDisplay(){
+
+    document.getElementById("total").textContent = total;
+    document.getElementById("heads").textContent = heads;
+    document.getElementById("tails").textContent = tails;
+
+    const phat =
+        total === 0 ? 0 : heads / total;
+
+    document.getElementById("phat").textContent =
+        phat.toFixed(3);
+
+    drawGraph();
+}
+
+function flipCoin(){
+
+    disableButtons(true);
+
+    document.getElementById("result").textContent =
+        "Flipping...";
+
+    coin.classList.add("flipping");
+
+    const isHeads =
+        Math.random() < pHeads;
+
+    setTimeout(() => {
+
+        coin.classList.remove("flipping");
+
+        if(isHeads){
+
+            heads++;
+            showHeads();
+
+            document.getElementById("result")
+                .textContent = "Heads";
+
+        }else{
+
+            tails++;
+            showTails();
+
+            document.getElementById("result")
+                .textContent = "Tails";
+        }
+
+        total++;
+
+        proportions.push(heads/total);
+
+        updateDisplay();
+
+        disableButtons(false);
+
+    },1000);
+}
+
+function resetSimulation(){
+
+    total = 0;
+    heads = 0;
+    tails = 0;
+
+    proportions = [];
+
+    showHeads();
+
+    document.getElementById("result")
+        .textContent =
+        'Click "Flip Coin"';
+
+    updateDisplay();
+}
+
+function drawGraph(){
+
+    const canvas =
+        document.getElementById("graph");
+
+    const ctx =
+        canvas.getContext("2d");
+
+    const w = canvas.width;
+    const h = canvas.height;
+
+    const left = 55;
+    const right = 15;
+    const top = 15;
+    const bottom = 40;
+
+    const plotWidth =
+        w-left-right;
+
+    const plotHeight =
+        h-top-bottom;
+
+    ctx.clearRect(0,0,w,h);
+
+    // Axes
+
+    ctx.strokeStyle="black";
+    ctx.lineWidth=1;
+
+    ctx.beginPath();
+    ctx.moveTo(left,top);
+    ctx.lineTo(left,h-bottom);
+    ctx.lineTo(w-right,h-bottom);
+    ctx.stroke();
+
+    // Grid lines
+
+    for(let i=0;i<=10;i++){
+
+        const value=i/10;
+
+        const y=
+            h-bottom -
+            value*plotHeight;
+
+        ctx.strokeStyle="#dddddd";
+
+        ctx.beginPath();
+        ctx.moveTo(left,y);
+        ctx.lineTo(w-right,y);
+        ctx.stroke();
+
+        ctx.fillStyle="black";
+        ctx.font="11px Arial";
+
+        ctx.fillText(
+            value.toFixed(1),
+            20,
+            y+4
+        );
+    }
+
+    // Labels
+
+    ctx.fillStyle="black";
+    ctx.font="12px Arial";
+
+    ctx.fillText(
+        "Sample Proportion",
+        5,
+        12
+    );
+
+    ctx.fillText(
+        "Number of Flips",
+        w/2-40,
+        h-5
+    );
+
+    // Dynamic x-axis
+
+    if(total>0){
+
+        ctx.fillText(
+            "1",
+            left,
+            h-bottom+18
+        );
+
+        ctx.fillText(
+            total.toString(),
+            w-right-20,
+            h-bottom+18
+        );
+    }
+
+    if(proportions.length===0){
+        return;
+    }
+
+    // Show only most recent bars if needed
+
+    const maxBars = 200;
+
+    const data =
+        proportions.length > maxBars
+        ? proportions.slice(-maxBars)
+        : proportions;
+
+    const barWidth =
+        plotWidth / data.length;
+
+    ctx.fillStyle =
+        "rgba(52,152,219,0.45)";
+
+    for(let i=0;i<data.length;i++){
+
+        const x =
+            left + i*barWidth;
+
+        const barHeight =
+            data[i] * plotHeight;
+
+        const y =
+            h-bottom -
+            barHeight;
+
+        ctx.fillRect(
+            x,
+            y,
+            Math.max(barWidth-1,1),
+            barHeight
+        );
+    }
+}
+
+showHeads();
+updateDisplay();
+
+</script>
+
+</body>
+</html>
