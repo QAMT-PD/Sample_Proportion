@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 
-<!-- Important for correct sizing on phones and tablets -->
+<!-- Makes the app scale correctly on phones and tablets -->
 <meta name="viewport"
       content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
 
@@ -430,9 +430,7 @@ th {
     <!-- GRAPH -->
 
     <div class="graph-container">
-
         <canvas id="graph"></canvas>
-
     </div>
 
 </div>
@@ -443,7 +441,7 @@ th {
 /* =========================================================
    SIMULATION SETUP
 
-   The probability is intentionally not displayed
+   Probability is deliberately not displayed
    anywhere in the student interface.
    ========================================================= */
 
@@ -481,12 +479,10 @@ function disableButtons(state) {
    ========================================================= */
 
 function showHeads() {
-
     coin.style.transform = "rotateY(0deg)";
 }
 
 function showTails() {
-
     coin.style.transform = "rotateY(180deg)";
 }
 
@@ -527,19 +523,26 @@ function flipCoin() {
     document.getElementById("result").textContent =
         "Flipping...";
 
-    /* Remove animation first so repeated flips animate */
+    /*
+       Removing the animation class first guarantees
+       that every subsequent flip animates correctly.
+    */
+
     coin.classList.remove("flipping");
 
     void coin.offsetWidth;
 
     coin.classList.add("flipping");
 
+
     const isHeads =
         Math.random() < pHeads;
+
 
     setTimeout(function() {
 
         coin.classList.remove("flipping");
+
 
         if (isHeads) {
 
@@ -560,9 +563,19 @@ function flipCoin() {
                 "Tails";
         }
 
+
         total++;
 
-        proportions.push(heads / total);
+
+        /*
+           Store the running sample proportion after
+           every flip.
+        */
+
+        proportions.push(
+            heads / total
+        );
+
 
         updateDisplay();
 
@@ -598,9 +611,9 @@ function resetSimulation() {
 /* =========================================================
    RESPONSIVE CANVAS
 
-   Canvas is resized to match the actual screen width.
-   Using devicePixelRatio keeps it sharp on high-resolution
-   mobile screens.
+   The internal canvas resolution adjusts to the screen.
+   This makes the graph sharp on phones, tablets and
+   high-resolution displays.
    ========================================================= */
 
 function resizeCanvas() {
@@ -617,7 +630,14 @@ function resizeCanvas() {
     canvas.height =
         Math.round(rect.height * ratio);
 
-    ctx.setTransform(ratio, 0, 0, ratio, 0, 0);
+    ctx.setTransform(
+        ratio,
+        0,
+        0,
+        ratio,
+        0,
+        0
+    );
 
     drawGraph();
 }
@@ -635,17 +655,21 @@ function drawGraph() {
     const h =
         canvas.clientHeight;
 
+
     if (w <= 0 || h <= 0) {
         return;
     }
 
 
-    /* Adjust margins for smaller screens */
+    /*
+       Graph margins adjust slightly for mobile screens.
+    */
 
     let left = 52;
     let right = 15;
     let top = 14;
     let bottom = 42;
+
 
     if (w < 500) {
 
@@ -662,11 +686,19 @@ function drawGraph() {
         h - top - bottom;
 
 
-    /* Clear */
+    /* Clear graph */
 
-    ctx.clearRect(0, 0, w, h);
+    ctx.clearRect(
+        0,
+        0,
+        w,
+        h
+    );
 
-    ctx.fillStyle = "white";
+
+    ctx.fillStyle =
+        "white";
+
 
     ctx.fillRect(
         0,
@@ -677,7 +709,7 @@ function drawGraph() {
 
 
     /* =====================================================
-       GRID LINES AND Y AXIS
+       GRID LINES AND Y-AXIS VALUES
        ===================================================== */
 
     ctx.font =
@@ -685,8 +717,11 @@ function drawGraph() {
         ? "10px Arial"
         : "11px Arial";
 
-    ctx.textAlign = "right";
-    ctx.textBaseline = "middle";
+    ctx.textAlign =
+        "right";
+
+    ctx.textBaseline =
+        "middle";
 
 
     for (let i = 0; i <= 10; i++) {
@@ -694,18 +729,22 @@ function drawGraph() {
         const value =
             i / 10;
 
+
         const y =
             h -
             bottom -
             value * plotHeight;
 
 
-        /* Grid line */
+        /*
+           Horizontal grid line
+        */
 
         ctx.strokeStyle =
             "#d6d6d6";
 
-        ctx.lineWidth = 1;
+        ctx.lineWidth =
+            1;
 
         ctx.beginPath();
 
@@ -722,7 +761,9 @@ function drawGraph() {
         ctx.stroke();
 
 
-        /* Y-axis value */
+        /*
+           Y-axis value
+        */
 
         ctx.fillStyle =
             "#222";
@@ -742,7 +783,8 @@ function drawGraph() {
     ctx.strokeStyle =
         "#222";
 
-    ctx.lineWidth = 1.2;
+    ctx.lineWidth =
+        1.2;
 
     ctx.beginPath();
 
@@ -765,11 +807,12 @@ function drawGraph() {
 
 
     /* =====================================================
-       AXIS TITLES
+       X-AXIS TITLE
        ===================================================== */
 
     ctx.fillStyle =
         "#222";
+
 
     ctx.font =
         w < 500
@@ -777,13 +820,12 @@ function drawGraph() {
         : "12px Arial";
 
 
-    /* X-axis */
-
     ctx.textAlign =
         "center";
 
     ctx.textBaseline =
         "alphabetic";
+
 
     ctx.fillText(
         "Number of Flips",
@@ -792,27 +834,34 @@ function drawGraph() {
     );
 
 
-    /* Y-axis title */
+    /* =====================================================
+       Y-AXIS TITLE
+       ===================================================== */
 
     ctx.save();
+
 
     ctx.translate(
         12,
         top + plotHeight / 2
     );
 
+
     ctx.rotate(
         -Math.PI / 2
     );
 
+
     ctx.textAlign =
         "center";
+
 
     ctx.fillText(
         "Sample Proportion",
         0,
         0
     );
+
 
     ctx.restore();
 
@@ -826,19 +875,23 @@ function drawGraph() {
         ctx.fillStyle =
             "#777";
 
+
         ctx.font =
             w < 500
             ? "12px Arial"
             : "13px Arial";
 
+
         ctx.textAlign =
             "center";
+
 
         ctx.fillText(
             "Flip the coin to begin",
             left + plotWidth / 2,
             top + plotHeight / 2
         );
+
 
         return;
     }
@@ -849,13 +902,15 @@ function drawGraph() {
        ===================================================== */
 
     /*
-       Up to 200 sample proportions are shown.
+       Up to 200 sample proportions are displayed.
 
-       Once more than 200 flips have occurred, the graph
-       displays the most recent 200 observations.
+       If more than 200 flips occur, the graph displays
+       the most recent 200 observations.
     */
 
-    const maxBars = 200;
+    const maxBars =
+        200;
+
 
     const startIndex =
         Math.max(
@@ -863,8 +918,11 @@ function drawGraph() {
             proportions.length - maxBars
         );
 
+
     const data =
-        proportions.slice(startIndex);
+        proportions.slice(
+            startIndex
+        );
 
 
     const barWidth =
@@ -872,8 +930,8 @@ function drawGraph() {
 
 
     /*
-       Semi-transparent blue:
-       grid lines remain visible through the columns.
+       Semi-transparent blue columns allow the
+       horizontal scale lines to remain visible.
     */
 
     ctx.fillStyle =
@@ -886,9 +944,11 @@ function drawGraph() {
             left +
             i * barWidth;
 
+
         const barHeight =
             data[i] *
             plotHeight;
+
 
         const y =
             h -
@@ -899,146 +959,97 @@ function drawGraph() {
         ctx.fillRect(
             x,
             y,
-            Math.max(barWidth - 0.5, 0.6),
+            Math.max(
+                barWidth - 0.5,
+                0.6
+            ),
             barHeight
         );
     }
 
 
     /* =====================================================
-       DYNAMIC X-AXIS LABELS
+       X-AXIS
+
+       Only the current total number of flips is shown.
+       No intermediate numbers are displayed.
        ===================================================== */
-
-    const firstFlip =
-        startIndex + 1;
-
-    const lastFlip =
-        total;
-
 
     ctx.fillStyle =
         "#222";
+
 
     ctx.font =
         w < 500
         ? "10px Arial"
         : "11px Arial";
 
+
     ctx.textBaseline =
         "top";
 
 
+    ctx.textAlign =
+        "right";
+
+
     /*
-       Choose how many labels to display according
-       to screen width.
+       Small tick mark at the far right of the x-axis.
     */
 
-    const numberOfTicks =
-        w < 400 ? 4 : 5;
+    ctx.strokeStyle =
+        "#555";
+
+    ctx.lineWidth =
+        1;
 
 
-    for (let i = 0; i <= numberOfTicks; i++) {
-
-        let flipNumber;
-
-        if (data.length === 1) {
-
-            flipNumber =
-                firstFlip;
-
-        } else {
-
-            flipNumber =
-                Math.round(
-                    firstFlip +
-                    (lastFlip - firstFlip) *
-                    (i / numberOfTicks)
-                );
-        }
+    ctx.beginPath();
 
 
-        const fraction =
-            data.length === 1
-            ? 0
-            : (flipNumber - firstFlip) /
-              (lastFlip - firstFlip);
+    ctx.moveTo(
+        w - right,
+        h - bottom
+    );
 
 
-        const x =
-            left +
-            fraction *
-            plotWidth;
+    ctx.lineTo(
+        w - right,
+        h - bottom + 4
+    );
 
 
-        /* Tick */
-
-        ctx.strokeStyle =
-            "#555";
-
-        ctx.beginPath();
-
-        ctx.moveTo(
-            x,
-            h - bottom
-        );
-
-        ctx.lineTo(
-            x,
-            h - bottom + 4
-        );
-
-        ctx.stroke();
+    ctx.stroke();
 
 
-        /* Label */
+    /*
+       Display only the maximum/current number
+       of flips at the far right.
+    */
 
-        if (i === 0) {
-
-            ctx.textAlign =
-                "left";
-
-        } else if (i === numberOfTicks) {
-
-            ctx.textAlign =
-                "right";
-
-        } else {
-
-            ctx.textAlign =
-                "center";
-        }
-
-
-        ctx.fillText(
-            flipNumber.toString(),
-            x,
-            h - bottom + 7
-        );
-
-
-        /*
-           Only one x-axis number is required when
-           there has been one flip.
-        */
-
-        if (data.length === 1) {
-            break;
-        }
-    }
+    ctx.fillText(
+        total.toString(),
+        w - right,
+        h - bottom + 7
+    );
 }
 
 
 /* =========================================================
-   SCREEN RESIZING / ROTATION
+   WINDOW RESIZING
    ========================================================= */
 
 let resizeTimer;
+
 
 window.addEventListener(
     "resize",
     function() {
 
-        clearTimeout(resizeTimer);
+        clearTimeout(
+            resizeTimer
+        );
+
 
         resizeTimer =
             setTimeout(
@@ -1049,10 +1060,9 @@ window.addEventListener(
 );
 
 
-/*
-   Recalculate the graph when a phone changes between
-   portrait and landscape orientation.
-*/
+/* =========================================================
+   PHONE/TABLET ROTATION
+   ========================================================= */
 
 window.addEventListener(
     "orientationchange",
@@ -1067,11 +1077,13 @@ window.addEventListener(
 
 
 /* =========================================================
-   START
+   START APP
    ========================================================= */
 
 showHeads();
+
 updateDisplay();
+
 
 window.addEventListener(
     "load",
