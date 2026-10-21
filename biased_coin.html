@@ -2,187 +2,451 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<!-- Important for correct sizing on phones and tablets -->
+<meta name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
+
 <title>Coin Flip Simulator</title>
 
 <style>
 
-body{
-    font-family:Arial,sans-serif;
-    background:#f4f6f8;
-    text-align:center;
-    padding:6px;
-    margin:0;
-    overflow:hidden;
+/* =========================================================
+   GENERAL PAGE
+   ========================================================= */
+
+* {
+    box-sizing: border-box;
 }
 
-h1{
-    margin:4px 0;
-    font-size:1.5em;
-    color:#2c3e50;
+html, body {
+    margin: 0;
+    padding: 0;
 }
 
-.coin-container{
-    width:120px;
-    height:120px;
-    margin:6px auto;
-    perspective:1000px;
+body {
+    font-family: Arial, Helvetica, sans-serif;
+    background: #f4f6f8;
+    color: #222;
+    text-align: center;
+    min-height: 100vh;
+    padding: 6px 10px 10px;
 }
 
-.coin{
-    width:120px;
-    height:120px;
-    position:relative;
-    transform-style:preserve-3d;
+.app {
+    width: 100%;
+    max-width: 900px;
+    margin: 0 auto;
 }
 
-.face{
-    position:absolute;
-    width:100%;
-    height:100%;
-    border-radius:50%;
-    backface-visibility:hidden;
+h1 {
+    margin: 3px 0 5px;
+    font-size: 1.5rem;
+    color: #2c3e50;
+}
 
-    display:flex;
-    justify-content:center;
-    align-items:center;
 
-    font-size:60px;
-    font-weight:bold;
+/* =========================================================
+   COIN
+   ========================================================= */
+
+.coin-container {
+    width: 115px;
+    height: 115px;
+    margin: 5px auto;
+    perspective: 1000px;
+}
+
+.coin {
+    width: 115px;
+    height: 115px;
+    position: relative;
+    transform-style: preserve-3d;
+}
+
+.face {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+
+    border-radius: 50%;
+    backface-visibility: hidden;
+    -webkit-backface-visibility: hidden;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    font-size: 58px;
+    font-weight: bold;
 
     background:
-    radial-gradient(circle at 30% 30%,
-    #fff5a0,
-    #ffd700 40%,
-    #d4a017 75%,
-    #8b6508);
+        radial-gradient(
+            circle at 30% 30%,
+            #fff5a0,
+            #ffd700 40%,
+            #d4a017 75%,
+            #8b6508
+        );
 
-    border:6px solid #8b6508;
-
-    box-sizing:border-box;
+    border: 6px solid #8b6508;
 
     box-shadow:
-    inset 0 0 10px rgba(255,255,255,0.5),
-    inset 0 0 20px rgba(0,0,0,0.3),
-    0 4px 10px rgba(0,0,0,0.25);
+        inset 0 0 10px rgba(255,255,255,0.5),
+        inset 0 0 20px rgba(0,0,0,0.3),
+        0 4px 10px rgba(0,0,0,0.25);
 }
 
-.heads{
-    color:darkred;
+.heads {
+    color: darkred;
 }
 
-.tails{
-    color:navy;
-    transform:rotateY(180deg);
+.tails {
+    color: navy;
+    transform: rotateY(180deg);
 }
 
-@keyframes flipAnimation{
-    from{
-        transform:rotateY(0deg);
+
+/* =========================================================
+   FLIP ANIMATION
+   ========================================================= */
+
+@keyframes flipAnimation {
+    from {
+        transform: rotateY(0deg);
     }
-    to{
-        transform:rotateY(1800deg);
+
+    to {
+        transform: rotateY(1800deg);
     }
 }
 
-.flipping{
-    animation:flipAnimation 1s ease-in-out;
+@-webkit-keyframes flipAnimation {
+    from {
+        -webkit-transform: rotateY(0deg);
+    }
+
+    to {
+        -webkit-transform: rotateY(1800deg);
+    }
 }
 
-button{
-    padding:7px 14px;
-    font-size:14px;
-    margin:3px;
-    border:none;
-    border-radius:6px;
-    background:#3498db;
-    color:white;
-    cursor:pointer;
+.flipping {
+    animation: flipAnimation 1s ease-in-out;
+    -webkit-animation: flipAnimation 1s ease-in-out;
 }
 
-button:hover{
-    background:#2980b9;
+
+/* =========================================================
+   RESULT
+   ========================================================= */
+
+.result {
+    font-size: 18px;
+    font-weight: bold;
+    min-height: 24px;
+    margin: 3px 0;
 }
 
-button:disabled{
-    background:#95a5a6;
+
+/* =========================================================
+   BUTTONS
+   ========================================================= */
+
+.controls {
+    margin: 2px 0 5px;
 }
 
-.result{
-    font-size:18px;
-    font-weight:bold;
-    min-height:24px;
-    margin:4px;
+button {
+    padding: 8px 18px;
+    min-height: 38px;
+
+    font-size: 15px;
+
+    margin: 2px;
+
+    border: none;
+    border-radius: 7px;
+
+    background: #3498db;
+    color: white;
+
+    cursor: pointer;
+
+    touch-action: manipulation;
+    -webkit-tap-highlight-color: transparent;
 }
 
-table{
-    margin:8px auto;
-    border-collapse:collapse;
-    background:white;
-    font-size:13px;
+button:hover {
+    background: #2980b9;
 }
 
-th,td{
-    border:1px solid #ccc;
-    padding:5px 12px;
+button:active {
+    transform: scale(0.97);
 }
 
-#graph{
-    background:white;
-    border:1px solid #999;
-    margin-top:5px;
+button:disabled {
+    background: #95a5a6;
+    cursor: default;
+}
+
+
+/* =========================================================
+   STATISTICS
+   ========================================================= */
+
+.stats-wrapper {
+    width: 100%;
+    overflow-x: auto;
+    margin: 4px 0 5px;
+}
+
+table {
+    margin: 0 auto;
+    border-collapse: collapse;
+    background: white;
+    font-size: 13px;
+}
+
+th,
+td {
+    border: 1px solid #ccc;
+    padding: 5px 12px;
+}
+
+th {
+    background: #eef2f5;
+}
+
+
+/* =========================================================
+   GRAPH
+   ========================================================= */
+
+.graph-container {
+    width: 100%;
+    margin: 3px auto 0;
+}
+
+#graph {
+    display: block;
+
+    width: 100%;
+    height: 260px;
+
+    background: white;
+    border: 1px solid #999;
+}
+
+
+/* =========================================================
+   TABLET
+   ========================================================= */
+
+@media (max-width: 700px) {
+
+    body {
+        padding: 5px 8px;
+    }
+
+    h1 {
+        font-size: 1.3rem;
+    }
+
+    .coin-container,
+    .coin {
+        width: 105px;
+        height: 105px;
+    }
+
+    .face {
+        font-size: 52px;
+        border-width: 5px;
+    }
+
+    #graph {
+        height: 245px;
+    }
+}
+
+
+/* =========================================================
+   MOBILE PHONE
+   ========================================================= */
+
+@media (max-width: 480px) {
+
+    body {
+        padding: 4px 5px 8px;
+    }
+
+    h1 {
+        font-size: 1.2rem;
+        margin: 2px 0;
+    }
+
+    .coin-container,
+    .coin {
+        width: 90px;
+        height: 90px;
+    }
+
+    .coin-container {
+        margin: 3px auto;
+    }
+
+    .face {
+        font-size: 44px;
+        border-width: 5px;
+    }
+
+    .result {
+        font-size: 16px;
+        min-height: 20px;
+        margin: 2px;
+    }
+
+    button {
+        min-height: 42px;
+        padding: 8px 18px;
+        font-size: 15px;
+    }
+
+    table {
+        width: 100%;
+        table-layout: fixed;
+        font-size: 11px;
+    }
+
+    th,
+    td {
+        padding: 4px 2px;
+        word-wrap: break-word;
+    }
+
+    #graph {
+        height: 230px;
+    }
+}
+
+
+/* Very small phones */
+
+@media (max-width: 350px) {
+
+    .coin-container,
+    .coin {
+        width: 80px;
+        height: 80px;
+    }
+
+    .face {
+        font-size: 38px;
+        border-width: 4px;
+    }
+
+    #graph {
+        height: 210px;
+    }
 }
 
 </style>
 </head>
+
+
 <body>
 
-<h1>Biased Coin Flip Simulator</h1>
+<div class="app">
 
-<div class="coin-container">
+    <h1>Coin Flip Simulator</h1>
 
-    <div id="coin" class="coin">
 
-        <div class="face heads">
-            H
+    <!-- COIN -->
+
+    <div class="coin-container">
+
+        <div id="coin" class="coin">
+
+            <div class="face heads">
+                H
+            </div>
+
+            <div class="face tails">
+                T
+            </div>
+
         </div>
 
-        <div class="face tails">
-            T
-        </div>
+    </div>
+
+
+    <!-- RESULT -->
+
+    <div id="result" class="result">
+        Click "Flip Coin"
+    </div>
+
+
+    <!-- BUTTONS -->
+
+    <div class="controls">
+
+        <button id="flipButton" onclick="flipCoin()">
+            Flip Coin
+        </button>
+
+        <button id="resetButton" onclick="resetSimulation()">
+            Reset
+        </button>
+
+    </div>
+
+
+    <!-- STATISTICS -->
+
+    <div class="stats-wrapper">
+
+        <table>
+
+            <tr>
+                <th>Total Flips</th>
+                <th>Heads</th>
+                <th>Tails</th>
+                <th>Sample Proportion p̂</th>
+            </tr>
+
+            <tr>
+                <td id="total">0</td>
+                <td id="heads">0</td>
+                <td id="tails">0</td>
+                <td id="phat">0.000</td>
+            </tr>
+
+        </table>
+
+    </div>
+
+
+    <!-- GRAPH -->
+
+    <div class="graph-container">
+
+        <canvas id="graph"></canvas>
 
     </div>
 
 </div>
 
-<div id="result" class="result">
-Click "Flip Coin"
-</div>
-
-<button onclick="flipCoin()">Flip Coin</button>
-<button onclick="resetSimulation()">Reset</button>
-
-<table>
-<tr>
-    <th>Total Flips</th>
-    <th>Heads</th>
-    <th>Tails</th>
-    <th>Sample Proportion p̂</th>
-</tr>
-
-<tr>
-    <td id="total">0</td>
-    <td id="heads">0</td>
-    <td id="tails">0</td>
-    <td id="phat">0.000</td>
-</tr>
-</table>
-
-<canvas id="graph" width="850" height="260"></canvas>
 
 <script>
 
-// Hidden probability (not shown to students)
+/* =========================================================
+   SIMULATION SETUP
+
+   The probability is intentionally not displayed
+   anywhere in the student interface.
+   ========================================================= */
+
 const pHeads = 0.42;
 
 let total = 0;
@@ -191,26 +455,56 @@ let tails = 0;
 
 let proportions = [];
 
-const coin = document.getElementById("coin");
+const coin =
+    document.getElementById("coin");
 
-function disableButtons(state){
-    document.querySelectorAll("button")
-        .forEach(btn => btn.disabled = state);
+const canvas =
+    document.getElementById("graph");
+
+const ctx =
+    canvas.getContext("2d");
+
+
+/* =========================================================
+   BUTTON CONTROL
+   ========================================================= */
+
+function disableButtons(state) {
+
+    document.getElementById("flipButton").disabled = state;
+    document.getElementById("resetButton").disabled = state;
 }
 
-function showHeads(){
+
+/* =========================================================
+   COIN FACES
+   ========================================================= */
+
+function showHeads() {
+
     coin.style.transform = "rotateY(0deg)";
 }
 
-function showTails(){
+function showTails() {
+
     coin.style.transform = "rotateY(180deg)";
 }
 
-function updateDisplay(){
 
-    document.getElementById("total").textContent = total;
-    document.getElementById("heads").textContent = heads;
-    document.getElementById("tails").textContent = tails;
+/* =========================================================
+   DISPLAY
+   ========================================================= */
+
+function updateDisplay() {
+
+    document.getElementById("total").textContent =
+        total;
+
+    document.getElementById("heads").textContent =
+        heads;
+
+    document.getElementById("tails").textContent =
+        tails;
 
     const phat =
         total === 0 ? 0 : heads / total;
@@ -221,51 +515,68 @@ function updateDisplay(){
     drawGraph();
 }
 
-function flipCoin(){
+
+/* =========================================================
+   FLIP COIN
+   ========================================================= */
+
+function flipCoin() {
 
     disableButtons(true);
 
     document.getElementById("result").textContent =
         "Flipping...";
 
+    /* Remove animation first so repeated flips animate */
+    coin.classList.remove("flipping");
+
+    void coin.offsetWidth;
+
     coin.classList.add("flipping");
 
     const isHeads =
         Math.random() < pHeads;
 
-    setTimeout(() => {
+    setTimeout(function() {
 
         coin.classList.remove("flipping");
 
-        if(isHeads){
+        if (isHeads) {
 
             heads++;
+
             showHeads();
 
-            document.getElementById("result")
-                .textContent = "Heads";
+            document.getElementById("result").textContent =
+                "Heads";
 
-        }else{
+        } else {
 
             tails++;
+
             showTails();
 
-            document.getElementById("result")
-                .textContent = "Tails";
+            document.getElementById("result").textContent =
+                "Tails";
         }
 
         total++;
 
-        proportions.push(heads/total);
+        proportions.push(heads / total);
 
         updateDisplay();
 
         disableButtons(false);
 
-    },1000);
+    }, 1000);
 }
 
-function resetSimulation(){
+
+/* =========================================================
+   RESET
+   ========================================================= */
+
+function resetSimulation() {
 
     total = 0;
     heads = 0;
@@ -273,153 +584,499 @@ function resetSimulation(){
 
     proportions = [];
 
+    coin.classList.remove("flipping");
+
     showHeads();
 
-    document.getElementById("result")
-        .textContent =
+    document.getElementById("result").textContent =
         'Click "Flip Coin"';
 
     updateDisplay();
 }
 
-function drawGraph(){
 
-    const canvas =
-        document.getElementById("graph");
+/* =========================================================
+   RESPONSIVE CANVAS
 
-    const ctx =
-        canvas.getContext("2d");
+   Canvas is resized to match the actual screen width.
+   Using devicePixelRatio keeps it sharp on high-resolution
+   mobile screens.
+   ========================================================= */
 
-    const w = canvas.width;
-    const h = canvas.height;
+function resizeCanvas() {
 
-    const left = 55;
-    const right = 15;
-    const top = 15;
-    const bottom = 40;
+    const rect =
+        canvas.getBoundingClientRect();
 
-    const plotWidth =
-        w-left-right;
+    const ratio =
+        window.devicePixelRatio || 1;
 
-    const plotHeight =
-        h-top-bottom;
+    canvas.width =
+        Math.round(rect.width * ratio);
 
-    ctx.clearRect(0,0,w,h);
+    canvas.height =
+        Math.round(rect.height * ratio);
 
-    // Axes
+    ctx.setTransform(ratio, 0, 0, ratio, 0, 0);
 
-    ctx.strokeStyle="black";
-    ctx.lineWidth=1;
+    drawGraph();
+}
 
-    ctx.beginPath();
-    ctx.moveTo(left,top);
-    ctx.lineTo(left,h-bottom);
-    ctx.lineTo(w-right,h-bottom);
-    ctx.stroke();
 
-    // Grid lines
+/* =========================================================
+   GRAPH
+   ========================================================= */
 
-    for(let i=0;i<=10;i++){
+function drawGraph() {
 
-        const value=i/10;
+    const w =
+        canvas.clientWidth;
 
-        const y=
-            h-bottom -
-            value*plotHeight;
+    const h =
+        canvas.clientHeight;
 
-        ctx.strokeStyle="#dddddd";
-
-        ctx.beginPath();
-        ctx.moveTo(left,y);
-        ctx.lineTo(w-right,y);
-        ctx.stroke();
-
-        ctx.fillStyle="black";
-        ctx.font="11px Arial";
-
-        ctx.fillText(
-            value.toFixed(1),
-            20,
-            y+4
-        );
-    }
-
-    // Labels
-
-    ctx.fillStyle="black";
-    ctx.font="12px Arial";
-
-    ctx.fillText(
-        "Sample Proportion",
-        5,
-        12
-    );
-
-    ctx.fillText(
-        "Number of Flips",
-        w/2-40,
-        h-5
-    );
-
-    // Dynamic x-axis
-
-    if(total>0){
-
-        ctx.fillText(
-            "1",
-            left,
-            h-bottom+18
-        );
-
-        ctx.fillText(
-            total.toString(),
-            w-right-20,
-            h-bottom+18
-        );
-    }
-
-    if(proportions.length===0){
+    if (w <= 0 || h <= 0) {
         return;
     }
 
-    // Show only most recent bars if needed
+
+    /* Adjust margins for smaller screens */
+
+    let left = 52;
+    let right = 15;
+    let top = 14;
+    let bottom = 42;
+
+    if (w < 500) {
+
+        left = 45;
+        right = 10;
+        bottom = 40;
+    }
+
+
+    const plotWidth =
+        w - left - right;
+
+    const plotHeight =
+        h - top - bottom;
+
+
+    /* Clear */
+
+    ctx.clearRect(0, 0, w, h);
+
+    ctx.fillStyle = "white";
+
+    ctx.fillRect(
+        0,
+        0,
+        w,
+        h
+    );
+
+
+    /* =====================================================
+       GRID LINES AND Y AXIS
+       ===================================================== */
+
+    ctx.font =
+        w < 500
+        ? "10px Arial"
+        : "11px Arial";
+
+    ctx.textAlign = "right";
+    ctx.textBaseline = "middle";
+
+
+    for (let i = 0; i <= 10; i++) {
+
+        const value =
+            i / 10;
+
+        const y =
+            h -
+            bottom -
+            value * plotHeight;
+
+
+        /* Grid line */
+
+        ctx.strokeStyle =
+            "#d6d6d6";
+
+        ctx.lineWidth = 1;
+
+        ctx.beginPath();
+
+        ctx.moveTo(
+            left,
+            y
+        );
+
+        ctx.lineTo(
+            w - right,
+            y
+        );
+
+        ctx.stroke();
+
+
+        /* Y-axis value */
+
+        ctx.fillStyle =
+            "#222";
+
+        ctx.fillText(
+            value.toFixed(1),
+            left - 7,
+            y
+        );
+    }
+
+
+    /* =====================================================
+       AXES
+       ===================================================== */
+
+    ctx.strokeStyle =
+        "#222";
+
+    ctx.lineWidth = 1.2;
+
+    ctx.beginPath();
+
+    ctx.moveTo(
+        left,
+        top
+    );
+
+    ctx.lineTo(
+        left,
+        h - bottom
+    );
+
+    ctx.lineTo(
+        w - right,
+        h - bottom
+    );
+
+    ctx.stroke();
+
+
+    /* =====================================================
+       AXIS TITLES
+       ===================================================== */
+
+    ctx.fillStyle =
+        "#222";
+
+    ctx.font =
+        w < 500
+        ? "11px Arial"
+        : "12px Arial";
+
+
+    /* X-axis */
+
+    ctx.textAlign =
+        "center";
+
+    ctx.textBaseline =
+        "alphabetic";
+
+    ctx.fillText(
+        "Number of Flips",
+        left + plotWidth / 2,
+        h - 5
+    );
+
+
+    /* Y-axis title */
+
+    ctx.save();
+
+    ctx.translate(
+        12,
+        top + plotHeight / 2
+    );
+
+    ctx.rotate(
+        -Math.PI / 2
+    );
+
+    ctx.textAlign =
+        "center";
+
+    ctx.fillText(
+        "Sample Proportion",
+        0,
+        0
+    );
+
+    ctx.restore();
+
+
+    /* =====================================================
+       NO DATA YET
+       ===================================================== */
+
+    if (proportions.length === 0) {
+
+        ctx.fillStyle =
+            "#777";
+
+        ctx.font =
+            w < 500
+            ? "12px Arial"
+            : "13px Arial";
+
+        ctx.textAlign =
+            "center";
+
+        ctx.fillText(
+            "Flip the coin to begin",
+            left + plotWidth / 2,
+            top + plotHeight / 2
+        );
+
+        return;
+    }
+
+
+    /* =====================================================
+       COLUMN DATA
+       ===================================================== */
+
+    /*
+       Up to 200 sample proportions are shown.
+
+       Once more than 200 flips have occurred, the graph
+       displays the most recent 200 observations.
+    */
 
     const maxBars = 200;
 
+    const startIndex =
+        Math.max(
+            0,
+            proportions.length - maxBars
+        );
+
     const data =
-        proportions.length > maxBars
-        ? proportions.slice(-maxBars)
-        : proportions;
+        proportions.slice(startIndex);
+
 
     const barWidth =
         plotWidth / data.length;
 
-    ctx.fillStyle =
-        "rgba(52,152,219,0.45)";
 
-    for(let i=0;i<data.length;i++){
+    /*
+       Semi-transparent blue:
+       grid lines remain visible through the columns.
+    */
+
+    ctx.fillStyle =
+        "rgba(52, 152, 219, 0.45)";
+
+
+    for (let i = 0; i < data.length; i++) {
 
         const x =
-            left + i*barWidth;
+            left +
+            i * barWidth;
 
         const barHeight =
-            data[i] * plotHeight;
+            data[i] *
+            plotHeight;
 
         const y =
-            h-bottom -
+            h -
+            bottom -
             barHeight;
+
 
         ctx.fillRect(
             x,
             y,
-            Math.max(barWidth-1,1),
+            Math.max(barWidth - 0.5, 0.6),
             barHeight
         );
     }
+
+
+    /* =====================================================
+       DYNAMIC X-AXIS LABELS
+       ===================================================== */
+
+    const firstFlip =
+        startIndex + 1;
+
+    const lastFlip =
+        total;
+
+
+    ctx.fillStyle =
+        "#222";
+
+    ctx.font =
+        w < 500
+        ? "10px Arial"
+        : "11px Arial";
+
+    ctx.textBaseline =
+        "top";
+
+
+    /*
+       Choose how many labels to display according
+       to screen width.
+    */
+
+    const numberOfTicks =
+        w < 400 ? 4 : 5;
+
+
+    for (let i = 0; i <= numberOfTicks; i++) {
+
+        let flipNumber;
+
+        if (data.length === 1) {
+
+            flipNumber =
+                firstFlip;
+
+        } else {
+
+            flipNumber =
+                Math.round(
+                    firstFlip +
+                    (lastFlip - firstFlip) *
+                    (i / numberOfTicks)
+                );
+        }
+
+
+        const fraction =
+            data.length === 1
+            ? 0
+            : (flipNumber - firstFlip) /
+              (lastFlip - firstFlip);
+
+
+        const x =
+            left +
+            fraction *
+            plotWidth;
+
+
+        /* Tick */
+
+        ctx.strokeStyle =
+            "#555";
+
+        ctx.beginPath();
+
+        ctx.moveTo(
+            x,
+            h - bottom
+        );
+
+        ctx.lineTo(
+            x,
+            h - bottom + 4
+        );
+
+        ctx.stroke();
+
+
+        /* Label */
+
+        if (i === 0) {
+
+            ctx.textAlign =
+                "left";
+
+        } else if (i === numberOfTicks) {
+
+            ctx.textAlign =
+                "right";
+
+        } else {
+
+            ctx.textAlign =
+                "center";
+        }
+
+
+        ctx.fillText(
+            flipNumber.toString(),
+            x,
+            h - bottom + 7
+        );
+
+
+        /*
+           Only one x-axis number is required when
+           there has been one flip.
+        */
+
+        if (data.length === 1) {
+            break;
+        }
+    }
 }
+
+
+/* =========================================================
+   SCREEN RESIZING / ROTATION
+   ========================================================= */
+
+let resizeTimer;
+
+window.addEventListener(
+    "resize",
+    function() {
+
+        clearTimeout(resizeTimer);
+
+        resizeTimer =
+            setTimeout(
+                resizeCanvas,
+                100
+            );
+    }
+);
+
+
+/*
+   Recalculate the graph when a phone changes between
+   portrait and landscape orientation.
+*/
+
+window.addEventListener(
+    "orientationchange",
+    function() {
+
+        setTimeout(
+            resizeCanvas,
+            150
+        );
+    }
+);
+
+
+/* =========================================================
+   START
+   ========================================================= */
 
 showHeads();
 updateDisplay();
+
+window.addEventListener(
+    "load",
+    resizeCanvas
+);
 
 </script>
 
